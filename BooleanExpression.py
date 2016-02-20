@@ -8,68 +8,10 @@ class BooleanExpression:
 		"|":1,
 		"&":2
 	}
-	
-	#Constructor: takes an infix boolean expression string (e.g. "DOG_HAS_FLEAS & (CAT_HAS_COLLAR | CAT_HAS_WORMS)")
-	def __init__(self, infixBooleanVarExpressionString):
-		self.booleanVarExpressionString = infixBooleanVarExpressionString
-		expressionString = BooleanExpression.infixBooleanVarExpressionString.replace("("," ( ")
-		expressionString = expressionString.replace(")"," ) ")
-		infixTokenizedBooleanVarExpression = expressionString.split()
-		self.postfixTokenizedBooleanVarExpression = BooleanExpression.infixTokenListToPostfixTokenList(infixTokenizedBooleanVarExpression) 
-				
-		
-	#Evaluate method returns true or false given a list of strings of boolean variable names that assert as True.
-	#For example given that this BooleanExpression class was initialized as "DOG_HAS_FLEAS & (CAT_HAS_COLLAR | CAT_HAS_WORMS)"
-	#if assertedTrueBoolVars == ["DOG_HAS_FLEAS","CAT_HAS_COLLAR"]
-	#then the result of calling this method will be true
-	#but if assertedTrueBoolVars == ["DOG_HAS_FLEAS","DOG_HAS_COLLAR"] then it will return false since
-	#neither "CAT_HAS_COLLAR" or "CAT_HAS_WORMS" were in the assertedTrueBoolVars list
-	def evaluate(self, assertedBooleanVarsList):
-		#For each token in postFixTokenList: 
-		#If it is in assertedTrueBoolVars list then replace it with 'True', 
-		#otherwise replace it with 'False'
-		postFixTokenizedBooleanExpression = BooleanExpression.replaceAssertedBooleanVarsWithBools(self.postfixTokenizedBooleanVarExpression) 		
-		
-		#Now evaluate the postfix tokenized boolean expression
-		return BooleanExpression.evaluateBooleanExpression(postFixTokenizedBooleanExpression)
-		
-	@staticmethod
-	def evaluateBooleanExpression(postFixTokenizedBooleanExpression):
-		operandStack = []
-		for token in postFixTokenizedBooleanExpression:
-			if(token in OPERATORS):
-				operand2 = operandStack.pop()
-				operand1 = operandStack.pop()
-				result = BooleanExpression.doBooleanOperation(token,operand1,operand2)
-				operandStack.push(result)
-			else:
-				operandStack.push(token == 'True')
-		return 
 
 	@staticmethod
-	def doBooleanOperation(op,operand1,operand2):
-		if(op == "&"):
-			return operand1 and operand2
-		elif(op == "|"):
-			return operand1 or operand2
-		else:
-			raise ValueError("op must be & or |")
-		
-	@staticmethod
-	def replaceAssertedBooleanVarsWithBools(tokenizedBooleanVarExpressionList,assertedBooleanVarsList):
-		result = []
-		for token in tokenizedBooleanVarExpressionList:
-			if(token in OPERATORS):
-				result.append(token)
-			elif(token in assertedBooleanVarsList):
-				result.append('True')
-			else:
-				result.append('False')
-		return result						
-	
-	@staticmethod
 	def infixTokenListToPostfixTokenList(infixTokenizedBooleanExpressionList):
-		#Converts infix boolean expression string to a postfix expression string
+                #Converts infix boolean expression string to a postfix expression string
 		stack = []
 		postfix = []
 		for token in infixTokenizedBooleanExpressionList:
@@ -105,5 +47,63 @@ class BooleanExpression:
 					
 		return postfix
 	
+	
+	#Constructor: takes an infix boolean expression string (e.g. "DOG_HAS_FLEAS & (CAT_HAS_COLLAR | CAT_HAS_WORMS)")
+	def __init__(self, infixBooleanVarExpressionString):
+		self.booleanVarExpressionString = infixBooleanVarExpressionString
+		expressionString = self.infixBooleanVarExpressionString.replace("("," ( ")
+		expressionString = expressionString.replace(")"," ) ")
+		infixTokenizedBooleanVarExpression = expressionString.split()
+		self.postfixTokenizedBooleanVarExpression = self.infixTokenListToPostfixTokenList(infixTokenizedBooleanVarExpression) 
+				
+		
+	#Evaluate method returns true or false given a list of strings of boolean variable names that assert as True.
+	#For example given that this BooleanExpression class was initialized as "DOG_HAS_FLEAS & (CAT_HAS_COLLAR | CAT_HAS_WORMS)"
+	#if assertedTrueBoolVars == ["DOG_HAS_FLEAS","CAT_HAS_COLLAR"]
+	#then the result of calling this method will be true
+	#but if assertedTrueBoolVars == ["DOG_HAS_FLEAS","DOG_HAS_COLLAR"] then it will return false since
+	#neither "CAT_HAS_COLLAR" or "CAT_HAS_WORMS" were in the assertedTrueBoolVars list
+	def evaluate(self, assertedBooleanVarsList):
+		#For each token in postFixTokenList: 
+		#If it is in assertedTrueBoolVars list then replace it with 'True', 
+		#otherwise replace it with 'False'
+		postFixTokenizedBooleanExpression = self.replaceAssertedBooleanVarsWithBools(self.postfixTokenizedBooleanVarExpression) 		
+		
+		#Now evaluate the postfix tokenized boolean expression
+		return self.evaluateBooleanExpression(postFixTokenizedBooleanExpression)
+		
+	@staticmethod
+	def evaluateBooleanExpression(postFixTokenizedBooleanExpression):
+		operandStack = []
+		for token in postFixTokenizedBooleanExpression:
+			if(token in OPERATORS):
+				operand2 = operandStack.pop()
+				operand1 = operandStack.pop()
+				result = BooleanExpression.doBooleanOperation(token,operand1,operand2)
+				operandStack.push(result)
+			else:
+				operandStack.push(token == 'True')
+		return 
 
+	@staticmethod
+	def doBooleanOperation(op,operand1,operand2):
+		if(op == "&"):
+			return operand1 and operand2
+		elif(op == "|"):
+			return operand1 or operand2
+		else:
+			raise ValueError("op must be & or |")
+		
+	@staticmethod
+	def replaceAssertedBooleanVarsWithBools(tokenizedBooleanVarExpressionList,assertedBooleanVarsList):
+		result = []
+		for token in tokenizedBooleanVarExpressionList:
+			if(token in OPERATORS):
+				result.append(token)
+			elif(token in assertedBooleanVarsList):
+				result.append('True')
+			else:
+				result.append('False')
+		return result						
+	
 						
